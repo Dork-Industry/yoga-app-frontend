@@ -1,1 +1,1 @@
-# yoga-app-frontend
+# YOGA-APP-FRONTEND

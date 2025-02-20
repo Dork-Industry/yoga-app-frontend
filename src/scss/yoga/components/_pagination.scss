@@ -1,0 +1,42 @@
+/**
+ * = Paginations
+ */
+.circle-pagination {
+
+    .page-link,
+    span {
+        @include display-flex();
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        @include border-radius($circle-radius);
+    }
+}
+
+.page-item{
+    &.disabled{
+        opacity: 0.5;
+    }
+}
+.page-link {
+    @include display-flex();
+    @include justify-content(center);
+    margin: auto 5px;
+    height: 40px;
+    width: 40px;
+}
+
+.prevBtn,
+.nextBtn {
+    &.page-link {
+        background-color: $primary;
+        
+        span {
+            color: $white;
+            font-size: 24px;
+            line-height: 24px;
+        }
+    }
+}
