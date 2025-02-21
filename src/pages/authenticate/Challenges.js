@@ -16,7 +16,7 @@ const Challenges = () => {
         Id: 0,
         IsConfirmed: false
     });
-    
+
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
 
@@ -47,9 +47,9 @@ const Challenges = () => {
                         Add_Week: {
                             label: "View Week",
                             type: "Button",
-                            navigateRoute:"/admin/weeks",
+                            navigateRoute: "/admin/weeks",
                             queryparams: {
-                                challengesid : item._id,
+                                challengesid: item._id,
                             },
                         },
                         Pro: item.isActive,
@@ -83,8 +83,18 @@ const Challenges = () => {
         setShowModal(false);
     }
 
-    const deleteData = () => {
+    const deleteData = async () => {
+        let { data, error, status } = await postAPIData(`/deleteChallenges/${deleteUser.Id}`, null, token);
 
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
+        }
+        setDeleteUser({ Id: 0, IsConfirmed: false })
     }
 
     const statusChange = async (Id, Status) => {

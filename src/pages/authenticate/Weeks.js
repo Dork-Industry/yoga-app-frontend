@@ -9,9 +9,11 @@ import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
 
 const Weeks = () => {
-
-
     const [weekData, setWeeksData] = useState([]);
+    const [deleteUser, setDeleteUser] = useState({
+        Id: 0,
+        IsConfirmed: false
+    });
     const [errormsg, setErrormsg] = useState("")
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -35,10 +37,10 @@ const Weeks = () => {
                             type: "Button",
                             navigateRoute: "/admin/weekdays",
                             queryparams: {
-                                weekid : item._id,
-                                challengesid : id,
+                                weekid: item._id,
+                                challengesid: id,
                             },
-                            
+
                         },
                         Action: 1
                     }])
@@ -68,9 +70,23 @@ const Weeks = () => {
 
     const queryParams = new URLSearchParams({
         challengesid: id,
-       
-      }).toString();
 
+    }).toString();
+
+
+    const deleteData = async () => {
+        let { data, error, status } = await postAPIData(`/deleteWeek/${deleteUser.Id}`, null, token);
+
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
+        }
+        setDeleteUser({ Id: 0, IsConfirmed: false })
+    }
 
     return (
         <React.Fragment>
@@ -80,11 +96,28 @@ const Weeks = () => {
 
             {weekData.length > 0 ? <PageTrafficTable
                 data={weekData}
-            // handleModal={setShowModal} 
-            // setUser={setUpdateUser} 
-            // deleteUser={setDeleteUser}
+                // handleModal={setShowModal} 
+                // setUser={setUpdateUser} 
+                deleteUser={setDeleteUser}
             /> : <h2>{errormsg}</h2>
             }
+
+            <Modal show={deleteUser.IsConfirmed} onHide={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm Delete</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h5>Are you sure you want to delete?</h5>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={deleteData}>
+                        Confirm Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </React.Fragment>
     )
 };

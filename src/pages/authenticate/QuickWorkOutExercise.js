@@ -87,8 +87,18 @@ const QuickWorkOutExercise = () => {
         setShowModal(false);
     }
 
-    const deleteData = () => {
+    const deleteData = async () => {
+        let { data, error, status } = await postAPIData(`/deleteQuickworkoutexercise/${deleteUser.Id}`, null, token);
 
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
+        }
+        setDeleteUser({ Id: 0, IsConfirmed: false })
     }
 
 

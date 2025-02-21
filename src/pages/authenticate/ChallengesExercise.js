@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageTrafficTable } from "../../components/Tables";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
 import { Button, Form, Modal } from "react-bootstrap";
@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
 
 const ChallengesExercise = () => {
-
     const [searchParams] = useSearchParams();
     const daysid = searchParams.get('daysid');
     const week_id = searchParams.get('weekid');
@@ -22,7 +21,7 @@ const ChallengesExercise = () => {
         IsConfirmed: false
     });
     const [errormsg, setErrormsg] = useState("")
-    
+
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
 
@@ -90,13 +89,23 @@ const ChallengesExercise = () => {
         setShowModal(false);
     }
 
-    const deleteData = () => {
+    const deleteData = async () => {
+        let { data, error, status } = await postAPIData(`/deleteChallengesexercise/${deleteUser.Id}`, null, token);
 
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
+        }
+        setDeleteUser({ Id: 0, IsConfirmed: false })
     }
 
 
     const queryParams = new URLSearchParams({
-        daysid : daysid,
+        daysid: daysid,
         weekid: week_id,
         challengesid: challenges_id
 
@@ -107,13 +116,13 @@ const ChallengesExercise = () => {
             <Button variant="primary" className="my-2" onClick={() => navigate(`/admin/addchallengesexercise?${queryParams}`)}>
                 <FontAwesomeIcon icon={faPlus} /> Add New Challenges Exercise
             </Button>
-            {challengesExerciseData.length > 0 ? <PageTrafficTable 
-                                                    data={challengesExerciseData} 
-                                                    handleModal={setShowModal} 
-                                                    setUser={setUpdateUser} 
-                                                    deleteUser={setDeleteUser}
-                                                />
-                                            : <h2>{errormsg}</h2>}
+            {challengesExerciseData.length > 0 ? <PageTrafficTable
+                data={challengesExerciseData}
+                handleModal={setShowModal}
+                setUser={setUpdateUser}
+                deleteUser={setDeleteUser}
+            />
+                : <h2>{errormsg}</h2>}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>

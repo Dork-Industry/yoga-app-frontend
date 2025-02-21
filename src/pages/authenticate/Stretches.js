@@ -82,8 +82,18 @@ const Stretches = () => {
         setShowModal(false);
     }
 
-    const deleteData = () => {
-
+    const deleteData = async () => {
+        let { data, error, status } = await postAPIData(`/deleteStretches/${deleteUser.Id}`, null, token);
+        
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
+        }
+        setDeleteUser({ Id: 0, IsConfirmed: false })
     }
 
     const statusChange = async (Id, Status) => {

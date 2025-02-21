@@ -18,7 +18,7 @@ const StretchesExercise = () => {
         Id: 0,
         IsConfirmed: false
     });
-    
+
     const navigate = useNavigate();
     const stretches_id = searchParams.get('stretchesid');
     let token = localStorage.getItem('token');
@@ -79,8 +79,18 @@ const StretchesExercise = () => {
         setShowModal(false);
     }
 
-    const deleteData = () => {
+    const deleteData = async () => {
+        let { data, error, status } = await postAPIData(`/deleteStretchesexercise/${deleteUser.Id}`, null, token);
 
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
+        }
+        setDeleteUser({ Id: 0, IsConfirmed: false })
     }
 
     const queryParams = new URLSearchParams({
@@ -92,14 +102,14 @@ const StretchesExercise = () => {
             <Button variant="primary" className="my-2" onClick={() => navigate(`/admin/addstretchesexercise?${queryParams}`)}>
                 <FontAwesomeIcon icon={faPlus} /> Add New Stretches Exercise
             </Button>
-            {stretchesExercise.length > 0 ? <PageTrafficTable 
-                                                data={stretchesExercise} 
-                                                handleModal={setShowModal} 
-                                                setUser={setUpdateUser} 
-                                                deleteUser={setDeleteUser}
-                                            />
-                                            :<h2>{errormsg}</h2>
-                                    }
+            {stretchesExercise.length > 0 ? <PageTrafficTable
+                data={stretchesExercise}
+                handleModal={setShowModal}
+                setUser={setUpdateUser}
+                deleteUser={setDeleteUser}
+            />
+                : <h2>{errormsg}</h2>
+            }
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageTrafficTable } from "../../components/Tables";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
 import { Button, Form, Modal } from "react-bootstrap";
@@ -19,7 +19,7 @@ const CategoriesExercise = () => {
         IsConfirmed: false
     });
     const [errormsg, setErrormsg] = useState("")
-    
+
     const navigate = useNavigate();
     const category_id = searchParams.get('categoriesid');
     let token = localStorage.getItem('token');
@@ -89,8 +89,18 @@ const CategoriesExercise = () => {
         setShowModal(false);
     }
 
-    const deleteData = () => {
+    const deleteData = async() => {
+        let { data, error, status } = await postAPIData(`/deleteCategoryexercise/${deleteUser.Id}`, null, token);
 
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
+        }
+        setDeleteUser({ Id: 0, IsConfirmed: false })
     }
 
 
@@ -104,13 +114,13 @@ const CategoriesExercise = () => {
             <Button variant="primary" className="my-2" onClick={() => navigate(`/admin/addcategoryexercise?${queryParams}`)}>
                 <FontAwesomeIcon icon={faPlus} /> Add New Category Exercise
             </Button>
-            {categoriesExerciseData.length > 0 ? <PageTrafficTable 
-                                                    data={categoriesExerciseData} 
-                                                    handleModal={setShowModal} 
-                                                    setUser={setUpdateUser} 
-                                                    deleteUser={setDeleteUser}
-                                                />
-                                            : <h1>{errormsg}</h1>}
+            {categoriesExerciseData.length > 0 ? <PageTrafficTable
+                data={categoriesExerciseData}
+                handleModal={setShowModal}
+                setUser={setUpdateUser}
+                deleteUser={setDeleteUser}
+            />
+                : <h1>{errormsg}</h1>}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
