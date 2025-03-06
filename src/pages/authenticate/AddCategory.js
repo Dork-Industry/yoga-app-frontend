@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
 import { postAPIData } from "../../utils/getAPIData";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AddCategory = () => {
     const {
         register,
-        handleSubmit,
-        formState: { errors }
+        handleSubmit
     } = useForm();
     const navigate = useNavigate();
 
@@ -18,10 +18,10 @@ const AddCategory = () => {
     const submitData = async (values) => {
         const formData = new FormData();
 
-        Object.entries(values).map((data)=>{
-            if(data[0] === "image"){                
+        Object.entries(values).map((data) => {
+            if (data[0] === "image") {
                 formData.append(`${data[0]}`, data[1][0])
-            }else{
+            } else {
                 formData.append(`${data[0]}`, data[1])
             }
         })
@@ -30,12 +30,16 @@ const AddCategory = () => {
 
         if (!error) {
             if (status === 201) {
+                toast.success(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/admin/category');
             }
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/');
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     }

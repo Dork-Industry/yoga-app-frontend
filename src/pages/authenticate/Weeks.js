@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageTrafficTable } from "../../components/Tables";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useForm } from "react-hook-form";
-import InputField from "../../utils/InputField";
+import { toast } from "react-toastify";
 
 const Weeks = () => {
     const [weekData, setWeeksData] = useState([]);
@@ -23,7 +22,7 @@ const Weeks = () => {
 
     const fetchData = async () => {
         let { data, error, status } = await getAPIData(`/getWeeksByChallengesId/${id}`, token)
-        // console.log("data", data)
+
         if (!error) {
             setWeeksData([]);
             if (data.weeks.length > 0) {
@@ -70,7 +69,6 @@ const Weeks = () => {
 
     const queryParams = new URLSearchParams({
         challengesid: id,
-
     }).toString();
 
 
@@ -79,10 +77,14 @@ const Weeks = () => {
 
         if (!error) {
             fetchData();
+            toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/');
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
         setDeleteUser({ Id: 0, IsConfirmed: false })
@@ -94,12 +96,12 @@ const Weeks = () => {
                 <FontAwesomeIcon icon={faPlus} /> Add New Week
             </Button>
 
-            {weekData.length > 0 ? <PageTrafficTable
-                data={weekData}
-                // handleModal={setShowModal} 
-                // setUser={setUpdateUser} 
-                deleteUser={setDeleteUser}
-            /> : <h2>{errormsg}</h2>
+            {weekData.length > 0 ? (
+                <PageTrafficTable
+                    data={weekData}
+                    deleteUser={setDeleteUser}
+                />
+            ) : <h2>{errormsg}</h2>
             }
 
             <Modal show={deleteUser.IsConfirmed} onHide={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>

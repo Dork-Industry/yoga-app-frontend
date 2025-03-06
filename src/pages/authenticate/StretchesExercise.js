@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
+import { toast } from "react-toastify";
 
 const StretchesExercise = () => {
     const [stretchesExercise, setStretchesExercise] = useState([]);
@@ -49,7 +50,7 @@ const StretchesExercise = () => {
                         Description: item.exercise_Id.description,
                         Exercise_Time: item.exercise_Id.exerciseTime,
                         Pro: item.isActive,
-                        DeleteAction: 1
+                        Action: 2
                     }])
                 })
             }
@@ -84,10 +85,14 @@ const StretchesExercise = () => {
 
         if (!error) {
             fetchData();
+            toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            }else{
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
         setDeleteUser({ Id: 0, IsConfirmed: false })

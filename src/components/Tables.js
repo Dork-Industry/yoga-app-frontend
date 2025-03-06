@@ -147,44 +147,40 @@ export const PageTrafficTable = ({ data, handleModal, setUser, deleteUser, statu
                 <Image src={value[1]} style={{ height: 50, width: 50 }} />
               ) : (value[0] === "Pro" || value[0] === "Active") ? (
                 <ToggleSwitch activity={value[1]} id={props.Id} updateStatus={statusChange} />
-              ) : value[0] === "Action" ? (
-                <React.Fragment>
-                  <Button variant="outline-secondary" className="mx-1" onClick={() => {
-                    handleModal(true);
-                    setUser(data[id]);
-                  }}>
-                    <FontAwesomeIcon icon={faEdit} /> Edit
-                  </Button>
-                  <Button variant="outline-danger" className="mx-1" onClick={() => {
-                    deleteUser({
-                      Id: data[id].Id,
-                      IsConfirmed: true
-                    })
-                  }}>
-                    <FontAwesomeIcon icon={faTrashAlt} /> Delete
-                  </Button>
-                </React.Fragment>
-              ) : value[0] === "DeleteAction" ? (
-                <React.Fragment>
-                  <Button variant="outline-danger" className="mx-1" onClick={() => {
-                    deleteUser({
-                      Id: data[id].Id,
-                      IsConfirmed: true
-                    })
-                  }}>
-                    <FontAwesomeIcon icon={faTrashAlt} /> Delete
-                  </Button>
-                </React.Fragment>
-              ) : value[1]?.type === "Button" ? (
-                <Button variant="outline-primary" className="mx-1" onClick={() => {
-                  // if (value[1].label === "View Days") {
+              ) : value[0] === "Action" ?
+                value[1] === 1 ? (
+                  <React.Fragment>
+                    <Button variant="outline-secondary" className="mx-1" onClick={() => {
+                      handleModal(true);
+                      setUser(data[id]);
+                    }}>
+                      <FontAwesomeIcon icon={faEdit} /> Edit
+                    </Button>
+                    <Button variant="outline-danger" className="mx-1" onClick={() => {
+                      deleteUser({
+                        Id: data[id].Id,
+                        IsConfirmed: true
+                      })
+                    }}>
+                      <FontAwesomeIcon icon={faTrashAlt} /> Delete
+                    </Button>
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment>
+                    <Button variant="outline-danger" className="mx-1" onClick={() => {
+                      deleteUser({
+                        Id: data[id].Id,
+                        IsConfirmed: true
+                      })
+                    }}>
+                      <FontAwesomeIcon icon={faTrashAlt} /> Delete
+                    </Button>
+                  </React.Fragment>
+                ) : value[1]?.type === "Button" ? (
+                  <Button variant="outline-primary" className="mx-1" onClick={() => {
                     handleDaysClick(value[1].navigateRoute, data[id].Id, value[1].queryparams)
-                  // }
-                  // else {
-                  //   handleClick(value[1].navigateRoute, data[id].Id)
-                  // }
-                }}>{value[1].label}</Button>
-              ) : value[0] === "Id" ? id + 1+ ((activePage - 1) * 10) : <div dangerouslySetInnerHTML={{ __html: value[1] }} />}
+                  }}>{value[1].label}</Button>
+                ) : value[0] === "Id" ? id + 1 + ((activePage - 1) * 10) : <div dangerouslySetInnerHTML={{ __html: value[1] }} />}
             </td>
           )
         })}

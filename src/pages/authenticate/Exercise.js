@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InputField from "../../utils/InputField";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 const Exercise = () => {
     const [exerciseData, setExerciseData] = useState([]);
@@ -64,13 +65,17 @@ const Exercise = () => {
 
     const updateData = async (values) => {
         let { data, error, status } = await postAPIData(`/updateExercise/${updateUser.Id}`, values, token);
-        
+
         if (!error) {
+            toast.success("Update was successful!", { position: "top-center", autoClose: 2500 })
             fetchData();
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/');
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
         setShowModal(false);
@@ -81,24 +86,28 @@ const Exercise = () => {
 
         if (!error) {
             fetchData();
+            toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/');
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
         setDeleteUser({ Id: 0, IsConfirmed: false })
     }
 
-    const statusChange = async (Id,Status) => {
-        let {data, error, status} = await postAPIData(`/changeExerciseStatus`,{
+    const statusChange = async (Id, Status) => {
+        let { data, error, status } = await postAPIData(`/changeExerciseStatus`, {
             id: Id,
             status: Status ? 1 : 0
         }, token);
 
-        if(!error){
+        if (!error) {
             fetchData();
-        }else{
+        } else {
             if (status === 401) {
                 localStorage.removeItem('token');
                 navigate('/');
@@ -111,7 +120,7 @@ const Exercise = () => {
             <Button variant="primary" className="my-2" onClick={() => navigate('/admin/exercise/add')}>
                 <FontAwesomeIcon icon={faPlus} /> Add New Exercise
             </Button>
-            {exerciseData.length > 0 && <PageTrafficTable data={exerciseData} handleModal={setShowModal} setUser={setUpdateUser} deleteUser={setDeleteUser} statusChange={statusChange}/>}
+            {exerciseData.length > 0 && <PageTrafficTable data={exerciseData} handleModal={setShowModal} setUser={setUpdateUser} deleteUser={setDeleteUser} statusChange={statusChange} />}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
@@ -131,6 +140,7 @@ const Exercise = () => {
                             label="Exercise Time (in minutes)"
                             type="number"
                             placeholder="0"
+                            min={0}
                             defaultValue={updateUser?.Exercise_Time}
                             {...register('exerciseTime')}
                         />

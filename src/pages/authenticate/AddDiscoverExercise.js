@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-// import { PageTrafficTable } from "../../components/Tables";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
-import { Button, Card, Form, Modal } from "react-bootstrap";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { Button, Card, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
+import { toast } from "react-toastify";
 
 const AddDiscoverExercise = () => {
-
     const {
         register,
-        handleSubmit,
-        formState: { errors },
+        handleSubmit
     } = useForm();
 
     const [searchParams] = useSearchParams();
@@ -24,8 +20,7 @@ const AddDiscoverExercise = () => {
     let token = localStorage.getItem('token');
 
     const fetchData = async () => {
-        let { data, error, status } = await getAPIData(`/exercise`, token)
-        // console.log("data", data)
+        let { data, error, status } = await getAPIData(`/exercise`, token);
         if (!error) {
             setExercisesData([]);
             if (data.exercises.length > 0) {
@@ -59,7 +54,6 @@ const AddDiscoverExercise = () => {
     }, []);
 
     const submitData = async (values) => {
-
         const formData = {
             discover_id: id,
             exercise_ids: values.exercise_ids
@@ -69,12 +63,16 @@ const AddDiscoverExercise = () => {
 
         if (!error) {
             if (status === 201) {
+                toast.success(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate("/admin/discover");
             }
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem("token");
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate("/");
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     };

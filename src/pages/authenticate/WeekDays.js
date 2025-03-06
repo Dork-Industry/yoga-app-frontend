@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageTrafficTable } from "../../components/Tables";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useForm } from "react-hook-form";
-import InputField from "../../utils/InputField";
+import { toast } from "react-toastify";
 
 const WeekDays = () => {
     const [weekDaysData, setWeekDaysData] = useState([]);
@@ -21,10 +20,8 @@ const WeekDays = () => {
     const challenges_id = searchParams.get('challengesid');
     let token = localStorage.getItem('token');
 
-
     const fetchData = async () => {
         let { data, error, status } = await getAPIData(`/getDaysByWeekId/${id}`, token)
-        // console.log("data", data)
         if (!error) {
             setWeekDaysData([]);
             if (data.days.length > 0) {
@@ -73,7 +70,6 @@ const WeekDays = () => {
     const queryParams = new URLSearchParams({
         weekid: id,
         challengesid: challenges_id
-
     }).toString();
 
     const handleAddWeekDay = () => {
@@ -89,10 +85,14 @@ const WeekDays = () => {
 
         if (!error) {
             fetchData();
+            toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
         setDeleteUser({ Id: 0, IsConfirmed: false })
@@ -105,12 +105,12 @@ const WeekDays = () => {
                 <FontAwesomeIcon icon={faPlus} /> Add New Week Days
             </Button>
 
-            {weekDaysData.length > 0 ? <PageTrafficTable
-                data={weekDaysData}
-                // handleModal={setShowModal} 
-                // setUser={setUpdateUser} 
-                deleteUser={setDeleteUser}
-            /> : <h2>{errormsg}</h2>
+            {weekDaysData.length > 0 ? (
+                <PageTrafficTable
+                    data={weekDaysData}
+                    deleteUser={setDeleteUser}
+                />
+            ) : <h2>{errormsg}</h2>
             }
             <Modal show={deleteUser.IsConfirmed} onHide={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                 <Modal.Header closeButton>

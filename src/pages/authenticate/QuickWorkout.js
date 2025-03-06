@@ -7,6 +7,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PageTrafficTable } from "../../components/Tables";
 import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
+import { toast } from "react-toastify";
 
 const QuickWorkout = () => {
     const [workoutData, setWorkoutData] = useState([]);
@@ -72,11 +73,15 @@ const QuickWorkout = () => {
         let { data, error, status } = await postAPIData(`/updateQuickworkout/${updateUser.Id}`, values, token);
 
         if (!error) {
+            toast.success("Update was successful!", { position: "top-center", autoClose: 2500 });
             fetchData();
         } else {
-            if (status === 401) {
+            if (status === 401 || status === 400) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            }else{
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
         setShowModal(false);

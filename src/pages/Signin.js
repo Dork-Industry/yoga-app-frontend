@@ -1,32 +1,34 @@
 
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
-import { faFacebookF, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup, Toast } from "react-bootstrap";
-import { Link, useNavigate } from 'react-router-dom';
-import { RoutesData } from "../routes";
+import { faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
+import { Col, Row, Form,  Button, FormCheck, Container, InputGroup } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import BgImage from "../assets/img/illustrations/signin.svg";
 import { useForm } from "react-hook-form";
 import { postAPIData } from "../utils/getAPIData";
+import { toast } from "react-toastify";
 
 export default () => {
   const {
     register,
-    handleSubmit,
-    formState : { errors }
+    handleSubmit
   } = useForm();
   const navigate = useNavigate();
-  
+
   const handleLogin = async (Values) => {
-    let {data, error} = await postAPIData('/login', Values);
-    
-    if(!error){
+    let { data, error, status } = await postAPIData('/login', Values);
+    if (!error) {
       localStorage.setItem('token', data.token)
+      toast.success("Login Successful!", { position: "top-center", autoClose: 2500 })
       navigate('/dashboard');
     }
-    else{
-      console.log(data);
+    else {
+      if (status === 400) {
+        toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
+      } else {
+        toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
+      }
     }
   }
 
@@ -47,7 +49,7 @@ export default () => {
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faEnvelope} />
                       </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" placeholder="example@company.com" {...register('email')}/>
+                      <Form.Control autoFocus required type="email" placeholder="example@company.com" {...register('email')} />
                     </InputGroup>
                   </Form.Group>
                   <Form.Group>
@@ -57,7 +59,7 @@ export default () => {
                         <InputGroup.Text>
                           <FontAwesomeIcon icon={faUnlockAlt} />
                         </InputGroup.Text>
-                        <Form.Control required type="password" placeholder="Password" {...register('password')}/>
+                        <Form.Control required type="password" placeholder="Password" {...register('password')} />
                       </InputGroup>
                     </Form.Group>
                     <div className="d-flex justify-content-between align-items-center mb-4">
@@ -65,38 +67,12 @@ export default () => {
                         <FormCheck.Input id="defaultCheck5" className="me-2" />
                         <FormCheck.Label htmlFor="defaultCheck5" className="mb-0">Remember me</FormCheck.Label>
                       </Form.Check>
-                      {/* TODOMit */}
-                      {/* <Card.Link className="small text-end">Lost password?</Card.Link> */}
                     </div>
                   </Form.Group>
                   <Button variant="primary" type="submit" className="w-100 mt-4">
                     Sign in
                   </Button>
                 </Form>
-
-                {/* TODOMit */}
-                {/* <div className="mt-3 mb-4 text-center">
-                  <span className="fw-normal">or login with</span>
-                </div>
-                <div className="d-flex justify-content-center my-4">
-                  <Button variant="outline-light" className="btn-icon-only btn-pill text-facebook me-2">
-                    <FontAwesomeIcon icon={faFacebookF} />
-                  </Button>
-                  <Button variant="outline-light" className="btn-icon-only btn-pill text-twitter me-2">
-                    <FontAwesomeIcon icon={faTwitter} />
-                  </Button>
-                  <Button variant="outline-light" className="btn-icon-only btn-pil text-dark">
-                    <FontAwesomeIcon icon={faGithub} />
-                  </Button>
-                </div> */}
-                {/* <div className="d-flex justify-content-center align-items-center mt-4">
-                  <span className="fw-normal">
-                    Not registered?
-                    <Card.Link as={Link} to={RoutesData.Signup.path} className="fw-bold">
-                      {` Create account `}
-                    </Card.Link>
-                  </span>
-                </div> */}
               </div>
             </Col>
           </Row>

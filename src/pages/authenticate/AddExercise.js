@@ -4,14 +4,13 @@ import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
 import { postAPIData } from "../../utils/getAPIData";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AddExercise = () => {
     const {
         register,
         handleSubmit,
-        setValue,
-        getValues,
-        formState: { errors }
+        setValue
     } = useForm();
     const navigate = useNavigate();
 
@@ -32,12 +31,16 @@ const AddExercise = () => {
 
         if (!error) {
             if (status === 201) {
+                toast.success(`${data.message}`, { position:"top-center", autoClose: 2500 })
                 navigate('/admin/exercise');
             }
         } else {
-            if (status === 401) {
+            if (status === 400 || status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/');
+            }else{
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     }
