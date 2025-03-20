@@ -56,10 +56,11 @@
         font-size: $font-size-xs;
 
         @include media-breakpoint-down(lg) {
-            height: 2rem;
-		    width:  2rem;
-            min-height: 2rem;
-		    min-width:  2rem;
+            margin-top: 6px;
+            height: 30px;
+		    width:  30px;
+            min-height: 30px;
+		    min-width:  30px;
         }
     }
 

@@ -1,12 +1,11 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp, faArrowDown, faArrowUp, faEdit, faEllipsisH, faExternalLinkAlt, faEye, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Col, Row, Nav, Card, Image, Button, Table, Dropdown, ProgressBar, Pagination, ButtonGroup, Form } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
-
 import { RoutesData } from "../routes";
-import { pageVisits, pageTraffic, pageRanking } from "../data/tables";
+import { pageVisits, pageRanking } from "../data/tables";
 import transactions from "../data/transactions";
 import commands from "../data/commands";
 
@@ -136,7 +135,6 @@ export const PageTrafficTable = ({ data, handleModal, setUser, deleteUser, statu
 
       navigate(`${navigateroute}?${queryParams}`);
     }
-    // const { id, source, sourceIcon, sourceIconColor, sourceType, category, rank, trafficShare, change } = props;console.log(data);
 
     return (
       <tr>
@@ -184,29 +182,6 @@ export const PageTrafficTable = ({ data, handleModal, setUser, deleteUser, statu
             </td>
           )
         })}
-        {/* <td>
-          <Card.Link href="#" className="text-primary fw-bold">{id}</Card.Link>
-        </td>
-        <td className="fw-bold">
-          <FontAwesomeIcon icon={sourceIcon} className={`icon icon-xs text-${sourceIconColor} w-30`} />
-          {source}
-        </td>
-        <td>{sourceType}</td>
-        <td>{category ? category : "--"}</td>
-        <td>{rank ? rank : "--"}</td>
-        <td>
-          <Row className="d-flex align-items-center">
-            <Col xs={12} xl={2} className="px-0">
-              <small className="fw-bold">{trafficShare}%</small>
-            </Col>
-            <Col xs={12} xl={10} className="px-0 px-xl-1">
-              <ProgressBar variant="primary" className="progress-lg mb-0" now={trafficShare} min={0} max={100} />
-            </Col>
-          </Row>
-        </td>
-        <td>
-          <ValueChange value={change} suffix="%" />
-        </td> */}
       </tr>
     );
   };
@@ -219,7 +194,7 @@ export const PageTrafficTable = ({ data, handleModal, setUser, deleteUser, statu
             <thead className="thead-light">
               <tr>
                 {currentItems.length > 0 && Object.keys(currentItems[0]).map((key, index) => (
-                  <th className="border-0" key={index}>{key === 'Id' ? '#' : key.replace("_", " ")}</th>
+                  <th className="border-0" key={index}>{key === 'Id' ? '#' : key.replaceAll("_", " ")}</th>
                 ))}
               </tr>
             </thead>

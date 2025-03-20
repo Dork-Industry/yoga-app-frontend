@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PageTrafficTable } from "../../components/Tables";
@@ -23,7 +23,8 @@ const QuickWorkout = () => {
     const {
         register,
         handleSubmit,
-        setValue
+        setValue,
+        formState: { errors }
     } = useForm();
 
     const handleClose = () => {
@@ -60,7 +61,12 @@ const QuickWorkout = () => {
         } else {
             if (status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
     }
@@ -76,15 +82,17 @@ const QuickWorkout = () => {
             toast.success("Update was successful!", { position: "top-center", autoClose: 2500 });
             fetchData();
         } else {
-            if (status === 401 || status === 400) {
+            if (status === 401) {
                 localStorage.removeItem('token');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
-            }else{
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+            } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
-        setShowModal(false);
+        handleClose();
     }
 
     const deleteData = async () => {
@@ -95,7 +103,12 @@ const QuickWorkout = () => {
         } else {
             if (status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
         setDeleteUser({ Id: 0, IsConfirmed: false })
@@ -112,7 +125,12 @@ const QuickWorkout = () => {
         } else {
             if (status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
     }
@@ -122,7 +140,14 @@ const QuickWorkout = () => {
             <Button variant="primary" className="my-2" onClick={() => navigate('/admin/workout/add')}>
                 <FontAwesomeIcon icon={faPlus} /> Add New Quick Workout
             </Button>
-            {workoutData.length > 0 && <PageTrafficTable data={workoutData} handleModal={setShowModal} setUser={setUpdateUser} deleteUser={setDeleteUser} statusChange={statusChange} />}
+            {workoutData.length > 0 ?
+                <PageTrafficTable
+                    data={workoutData}
+                    handleModal={setShowModal}
+                    setUser={setUpdateUser}
+                    deleteUser={setDeleteUser}
+                    statusChange={statusChange}
+                /> : <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
@@ -135,7 +160,8 @@ const QuickWorkout = () => {
                             label="Workout"
                             placeholder="Workout"
                             defaultValue={updateUser?.Quick_Workout}
-                            {...register('quickworkoutName')}
+                            errors={errors['quickworkoutName']}
+                            {...register('quickworkoutName', { required: "Workout name is required." })}
                         />
 
                         <InputField
@@ -144,7 +170,8 @@ const QuickWorkout = () => {
                             row="3"
                             placeholder="Description"
                             defaultValue={updateUser?.Description}
-                            {...register('description')}
+                            errors={errors['description']}
+                            {...register('description', { required: "Description is required." })}
                         />
 
                     </Modal.Body>

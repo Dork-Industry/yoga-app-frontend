@@ -4,7 +4,6 @@ import { RoutesData } from "../routes";
 
 // pages
 import Presentation from "./Presentation";
-import Upgrade from "./Upgrade";
 import DashboardOverview from "./dashboard/DashboardOverview";
 import Transactions from "./Transactions";
 import Settings from "./Settings";
@@ -12,7 +11,7 @@ import BootstrapTables from "./tables/BootstrapTables";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import ForgotPassword from "./ForgotPassword";
-import ResetPassword from "./ResetPassword";
+import ChangePassword from "./ChangePassword";
 import Lock from "./Lock";
 import NotFoundPage from "./NotFound";
 import ServerError from "./ServerError";
@@ -74,7 +73,9 @@ import AddCategory from './authenticate/AddCategory';
 import AddDiscover from './authenticate/AddDiscover';
 import AddWorkout from './authenticate/AddWorkout';
 import AddStretches from './authenticate/AddStreches';
-import Users from './Users';
+import Users from './authenticate/User';
+import Plan from './authenticate/Plan';
+import AddPlan from './authenticate/AddPlan';
 
 const RouteWithLoader = ({ component: Component, isAuth, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
@@ -142,12 +143,14 @@ export default () => {
       <Route path={RoutesData.Signin.path} element={<RouteWithLoader component={Signin} isAuth={isAuth} />} />
       <Route path={RoutesData.Signup.path} element={<RouteWithLoader component={Signup} isAuth={isAuth} />} />
       <Route path={RoutesData.ForgotPassword.path} element={<RouteWithLoader component={ForgotPassword} isAuth={isAuth} />} />
-      <Route path={RoutesData.ResetPassword.path} element={<RouteWithLoader component={ResetPassword} isAuth={isAuth} />} />
       <Route path={RoutesData.Lock.path} element={<RouteWithLoader component={Lock} isAuth={isAuth} />} />
       <Route path={RoutesData.NotFound.path} element={<RouteWithLoader component={NotFoundPage} isAuth={isAuth} />} />
       <Route path={RoutesData.ServerError.path} element={<RouteWithLoader component={ServerError} isAuth={isAuth} />} />
 
+      <Route path={RoutesData.ChangePassword.path} element={<RouteWithLoader component={ChangePassword} isAuth={isAuth} />} />
       <Route path={RoutesData.Categories.path} element={<RouteWithSidebar component={Categories} />} />
+      <Route path={RoutesData.Plan.path} element={<RouteWithSidebar component={Plan} />} />
+      <Route path={RoutesData.AddPlan.path} element={<RouteWithSidebar component={AddPlan} />} />
       <Route path={RoutesData.CategoryExercise.path} element={<RouteWithSidebar component={CategoryExercise} />} />
       <Route path={RoutesData.AddCategoryExercise.path} element={<RouteWithSidebar component={AddCategoryExercise} />} />
       <Route path={RoutesData.Exercise.path} element={<RouteWithSidebar component={Exercise} />} />
@@ -175,7 +178,6 @@ export default () => {
       <Route path={RoutesData.AddStretches.path} element={<RouteWithSidebar component={AddStretches} />} />
 
       <Route path={RoutesData.DashboardOverview.path} element={<RouteWithSidebar component={DashboardOverview} isAuth={isAuth} />} />
-      <Route path={RoutesData.Upgrade.path} element={<RouteWithSidebar component={Upgrade} isAuth={isAuth} />} />
       <Route path={RoutesData.Transactions.path} element={<RouteWithSidebar component={Transactions} isAuth={isAuth} />} />
       <Route path={RoutesData.Settings.path} element={<RouteWithSidebar component={Settings} isAuth={isAuth} />} />
       <Route path={RoutesData.Users.path} element={<RouteWithSidebar component={Users} isAuth={isAuth} />} />

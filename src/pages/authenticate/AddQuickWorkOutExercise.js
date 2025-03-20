@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 const AddQuickWorkOutExercise = () => {
     const {
         register,
-        handleSubmit
+        handleSubmit,
+        formState: { errors }
     } = useForm();
 
     const [searchParams] = useSearchParams();
     const [exercisesData, setExercisesData] = useState([]);
-    const [errormsg, setErrormsg] = useState("")
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
     const id = searchParams.get('quickworkoutid');
     let token = localStorage.getItem('token');
@@ -30,21 +31,17 @@ const AddQuickWorkOutExercise = () => {
                         Exercise_Name: item.exerciseName,
                     }])
                 })
+            } else if (data.exercises.length < 1) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
             }
-
         }
         else {
             if (status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
-            }
-            else {
-                if (data.message) {
-                    setErrormsg(data.message);
-                }
-                else {
-                    setErrormsg("Something Went Wrong!")
-                }
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
     }
@@ -58,19 +55,22 @@ const AddQuickWorkOutExercise = () => {
             quickworkout_id: id,
             exercise_ids: values.exercise_ids
         }
+        setDeactive(true);
 
         let { data, error, status } = await postAPIData("/addQuickworkoutexercises", formData, token);
 
         if (!error) {
             if (status === 201) {
                 toast.success(`${data.message}`, { position: "top-center", autoClose: 2500 })
-                navigate("/admin/quickworkout");
+                navigate(`/admin/quickworkoutexercise?quickworkoutid=${id}`);
             }
         } else {
-            if (status === 401 || status === 400) {
+            if (status === 401) {
                 localStorage.removeItem("token");
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate("/");
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
             } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
@@ -86,10 +86,11 @@ const AddQuickWorkOutExercise = () => {
                         label="Select exercise"
                         type="multiselect"
                         options={exercisesData}
-                        {...register("exercise_ids")}
+                        errors={errors['exercise_ids']}
+                        {...register("exercise_ids", { required: "Please select at least one option." })}
                     />
 
-                    <Button variant="primary" type="submit" className="mt-4">
+                    <Button variant="primary" type="submit" className="mt-4" disabled={deactive}>
                         Add QuickWorkOut Exercise
                     </Button>
                 </Form>

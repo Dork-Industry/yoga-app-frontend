@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
@@ -12,12 +12,14 @@ const AddStretches = () => {
         handleSubmit,
         formState: { errors }
     } = useForm();
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
 
     let token = localStorage.getItem('token');
 
     const submitData = async (values) => {
         const formData = new FormData();
+        setDeactive(true);
 
         Object.entries(values).map((data) => {
             if (data[0] === "image") {
@@ -35,10 +37,12 @@ const AddStretches = () => {
                 navigate('/admin/stretches');
             }
         } else {
-            if (status === 401 || status === 400) {
+            if (status === 401) {
                 localStorage.removeItem('token');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
             } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
@@ -54,15 +58,15 @@ const AddStretches = () => {
                         label="Stretches"
                         type="text"
                         placeholder="Stretches"
-                        required={true}
-                        {...register('stretchesName')}
+                        errors={errors['stretchesName']}
+                        {...register('stretchesName', { required: "Stretches name is required." })}
                     />
 
                     <InputField
                         label="Stretches Image"
                         type="file"
-                        required={true}
-                        {...register('image')}
+                        errors={errors['image']}
+                        {...register('image', { required: "Stretches image is required." })}
                     />
 
                     <InputField
@@ -70,11 +74,11 @@ const AddStretches = () => {
                         type="textarea"
                         row="5"
                         placeholder="Description..."
-                        required={true}
-                        {...register('description')}
+                        errors={errors['description']}
+                        {...register('description', { required: "Description is required." })}
                     />
 
-                    <Button variant="primary" type="submit" className="mt-4">
+                    <Button variant="primary" type="submit" className="mt-4" disabled={deactive}>
                         Add Stretches
                     </Button>
                 </Form>

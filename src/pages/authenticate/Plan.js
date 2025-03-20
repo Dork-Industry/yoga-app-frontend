@@ -1,19 +1,19 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { getAPIData, postAPIData } from "../../utils/getAPIData";
+import { Button, Form, Modal, Spinner } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { PageTrafficTable } from "../../components/Tables";
-import { Button, Form, Modal, Spinner } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InputField from "../../utils/InputField";
-import { useForm } from "react-hook-form";
+import { getAPIData, postAPIData } from "../../utils/getAPIData";
 import { toast } from "react-toastify";
 
-const Categories = () => {
-    const [categoriesData, setCategoriesData] = useState([]);
+const Plan = () => {
+    const [planListData, setPlanListData] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [updateUser, setUpdateUser] = useState({});
-    const [deleteUser, setDeleteUser] = useState({
+    const [updatePlan, setUpdatePlan] = useState({});
+    const [deletePlan, setDeletePlan] = useState({
         Id: 0,
         IsConfirmed: false
     });
@@ -29,36 +29,32 @@ const Categories = () => {
     } = useForm();
 
     const handleClose = () => {
-        setValue('categoryName');
-        setValue('description');
+        setValue('planName');
+        setValue('price');
+        setValue('months');
+        setValue('sku_id_android');
+        setValue('sku_id_ios');
         setShowModal(false);
     }
 
     const fetchData = async () => {
-        let { data, error, status } = await getAPIData('/category', token);
+        let { data, error, status } = await getAPIData('/plan', token);
 
         if (!error) {
-            setCategoriesData([]);
-            if (data.categories.length > 0) {
-                data.categories.map((item) => {
-                    setCategoriesData((prev) => [...prev, {
+            setPlanListData([]);
+            if (data.plan.length > 0) {
+                data.plan.map((item) => {
+                    setPlanListData((prev) => [...prev, {
                         Id: item._id,
-                        Image: item.image,
-                        Category: item.category,
-                        Description: item.description,
-                        View_Exercise: {
-                            label: "View Exercise",
-                            type: "Button",
-                            navigateRoute: "/admin/categoryexercise",
-                            queryparams: {
-                                categoriesid: item._id,
-                            },
-                        },
-                        Pro: item.isActive,
+                        PlanName: item.plan_name,
+                        Price: item.price,
+                        Months: item.months,
+                        SKU_ID_Android: item.sku_id_android,
+                        SKU_ID_IOS: item.sku_id_ios,
                         Action: 1
                     }])
                 })
-            } else if (data.categories.length < 1) {
+            } else if (data.plan.length < 1) {
                 setErrormsg(data.message);
             }
         } else {
@@ -77,7 +73,7 @@ const Categories = () => {
     }, []);
 
     const updateData = async (values) => {
-        let { data, error, status } = await postAPIData(`/updateCategory/${updateUser.Id}`, values, token);
+        let { data, error, status } = await postAPIData(`/updatePlan/${updatePlan.Id}`, values, token);
 
         if (!error) {
             toast.success("Update was successful!", { position: "top-center", autoClose: 2500 });
@@ -97,7 +93,7 @@ const Categories = () => {
     }
 
     const deleteData = async () => {
-        let { data, error, status } = await postAPIData(`/deleteCategory/${deleteUser.Id}`, null, token);
+        let { data, error, status } = await postAPIData(`/deletePlan/${deletePlan.Id}`, null, token);
 
         if (!error) {
             fetchData();
@@ -113,77 +109,73 @@ const Categories = () => {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
-        setDeleteUser({ Id: 0, IsConfirmed: false })
-    }
-
-    const statusChange = async (Id, Status) => {
-        let { data, error, status } = await postAPIData(`/changeCategoryStatus`, {
-            id: Id,
-            status: Status ? 1 : 0
-        }, token);
-
-        if (!error) {
-            fetchData();
-        } else {
-            if (status === 401) {
-                localStorage.removeItem('token');
-                navigate('/');
-            }
-        }
+        setDeletePlan({ Id: 0, IsConfirmed: false })
     }
 
     return (
         <React.Fragment>
-            <Button variant="primary" className="my-2" onClick={() => navigate('/admin/category/add')}>
-                <FontAwesomeIcon icon={faPlus} /> Add New Category
+            <Button variant="primary" className="my-2" onClick={() => navigate('/admin/plan/add')}>
+                <FontAwesomeIcon icon={faPlus} /> Add New Plan
             </Button>
-            {categoriesData.length > 0 ?
+
+            {planListData.length > 0 ?
                 <PageTrafficTable
-                    data={categoriesData}
+                    data={planListData}
                     handleModal={setShowModal}
-                    setUser={setUpdateUser}
-                    deleteUser={setDeleteUser}
-                    statusChange={statusChange}
+                    setUser={setUpdatePlan}
+                    deleteUser={setDeletePlan}
                 /> : errormsg ? <h1>{errormsg}</h1> : <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Edit Category</Modal.Title>
+                        <Modal.Title>Edit Plan</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <InputField
                             type="text"
-                            label="Categoty"
-                            placeholder="Categoty"
-                            defaultValue={updateUser?.Category}
-                            errors={errors['categoryName']}
-                            {...register('categoryName', { required: "Category is required." })}
+                            label="Plan Name"
+                            placeholder="Plan Name"
+                            defaultValue={updatePlan?.PlanName}
+                            errors={errors['planName']}
+                            {...register('planName', { required: "Plan is required." })}
                         />
 
                         <InputField
-                            label="Description"
-                            type="textarea"
-                            row="3"
-                            placeholder="Description"
-                            defaultValue={updateUser?.Description}
-                            errors={errors['description']}
-                            {...register('description', { required: "Description is required." })}
+                            label="Price"
+                            type="number"
+                            placeholder="Price"
+                            defaultValue={updatePlan?.Price}
+                            errors={errors['price']}
+                            {...register('price', { required: "Price is required." })}
                         />
 
-                        {/* <InputField
-                            label="Category Image"
-                            type="file"
-                            errors={errors['image']}
-                            {...register('image', { required: "Category image is required." })}
-                        /> */}
+                        <InputField
+                            label="Months"
+                            type="number"
+                            placeholder="Months"
+                            defaultValue={updatePlan?.Months}
+                            errors={errors['months']}
+                            {...register('months', { required: "Month is required." })}
+                        />
 
-                        {/* <InputField
-                            label="Selected Image"
-                            type="image"
-                            defaultValue={updateUser?.Image}
-                        /> */}
+                        <InputField
+                            label="SKU ID Android"
+                            type="text"
+                            placeholder="SKU ID Android"
+                            defaultValue={updatePlan?.SKU_ID_Android}
+                            errors={errors['sku_id_android']}
+                            {...register('sku_id_android', { required: "SKU ID - ANDROID is required." })}
+                        />
 
+                        <InputField
+                            label="SKU ID IOS"
+                            type="text"
+                            placeholder="SKU ID IOSe"
+                            defaultValue={updatePlan?.SKU_ID_IOS}
+                            errors={errors['sku_id_ios']}
+                            {...register('sku_id_ios', { required: "SKU ID - IOS is required." })}
+                        />
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
@@ -196,7 +188,7 @@ const Categories = () => {
                 </Form>
             </Modal>
 
-            <Modal show={deleteUser.IsConfirmed} onHide={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
+            <Modal show={deletePlan.IsConfirmed} onHide={() => setDeletePlan({ Id: 0, IsConfirmed: false })}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirm Delete</Modal.Title>
                 </Modal.Header>
@@ -204,7 +196,7 @@ const Categories = () => {
                     <h5>Are you sure you want to delete?</h5>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
+                    <Button variant="secondary" onClick={() => setDeletePlan({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
                     <Button variant="primary" onClick={deleteData}>
@@ -215,4 +207,5 @@ const Categories = () => {
         </React.Fragment>
     )
 };
-export default Categories;
+
+export default Plan;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PageTrafficTable } from "../../components/Tables";
@@ -17,13 +17,15 @@ const Discover = () => {
         Id: 0,
         IsConfirmed: false
     });
+    const [errormsg, setErrormsg] = useState('');
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
 
     const {
         register,
         handleSubmit,
-        setValue
+        setValue,
+        formState: { errors }
     } = useForm();
 
     const handleClose = () => {
@@ -56,11 +58,16 @@ const Discover = () => {
                         Action: 1
                     }])
                 })
+            } else if (data.discovers.length < 1) {
+                setErrormsg(data.message);
             }
         } else {
             if (status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
     }
@@ -76,15 +83,17 @@ const Discover = () => {
             toast.success("Update was successful!", { position: "top-center", autoClose: 2500 });
             fetchData();
         } else {
-            if (status === 401 || status === 400) {
+            if (status === 401) {
                 localStorage.removeItem('token');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
             } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
-        setShowModal(false);
+        handleClose();
     }
 
     const deleteData = async () => {
@@ -94,10 +103,12 @@ const Discover = () => {
             fetchData();
             toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
         } else {
-            if (status === 401 || status === 400) {
+            if (status === 401) {
                 localStorage.removeItem('token');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
             } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
@@ -116,7 +127,12 @@ const Discover = () => {
         } else {
             if (status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
     }
@@ -126,7 +142,14 @@ const Discover = () => {
             <Button variant="primary" className="my-2" onClick={() => navigate('/admin/discover/add')}>
                 <FontAwesomeIcon icon={faPlus} /> Add New Discover
             </Button>
-            {discoverData.length > 0 && <PageTrafficTable data={discoverData} handleModal={setShowModal} setUser={setUpdateUser} deleteUser={setDeleteUser} statusChange={statusChange} />}
+            {discoverData.length > 0 ?
+                <PageTrafficTable
+                    data={discoverData}
+                    handleModal={setShowModal}
+                    setUser={setUpdateUser}
+                    deleteUser={setDeleteUser}
+                    statusChange={statusChange}
+                /> : errormsg ? <h1>{errormsg}</h1> : <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
@@ -139,7 +162,8 @@ const Discover = () => {
                             label="Discover"
                             placeholder="Discover"
                             defaultValue={updateUser?.Discover}
-                            {...register('discoverName')}
+                            errors={errors['discoverName']}
+                            {...register('discoverName', { required: "Discover name is required." })}
                         />
 
                         <InputField
@@ -148,7 +172,8 @@ const Discover = () => {
                             row="3"
                             placeholder="Description"
                             defaultValue={updateUser?.Description}
-                            {...register('description')}
+                            errors={errors['description']}
+                            {...register('description', { required: "Description is required." })}
                         />
 
                     </Modal.Body>

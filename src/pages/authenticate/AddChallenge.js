@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import InputField from "../../utils/InputField";
@@ -9,14 +9,17 @@ import { toast } from "react-toastify";
 const AddChallenge = () => {
     const {
         register,
-        handleSubmit
+        handleSubmit,
+        formState: { errors }
     } = useForm();
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
 
     let token = localStorage.getItem("token");
 
     const submitData = async (values) => {
         const formData = new FormData();
+        setDeactive(true);
 
         Object.entries(values).map((data) => {
             if (data[0] === "image") {
@@ -34,10 +37,12 @@ const AddChallenge = () => {
                 navigate("/admin/challenges");
             }
         } else {
-            if (status === 401 || status === 400) {
+            if (status === 401) {
                 localStorage.removeItem("token");
-                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate("/");
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
             } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
@@ -53,15 +58,15 @@ const AddChallenge = () => {
                         label="Challenges Name"
                         type="text"
                         placeholder="Enter your challenge name"
-                        required={true}
-                        {...register("challengesName")}
+                        errors={errors['challengesName']}
+                        {...register("challengesName", { required: "Challenge name is required." })}
                     />
 
                     <InputField
                         label="Challenges Image"
                         type="file"
-                        required={true}
-                        {...register("image")}
+                        errors={errors['image']}
+                        {...register("image", { required: "Challenge image is required." })}
                     />
 
                     <InputField
@@ -69,11 +74,11 @@ const AddChallenge = () => {
                         type="textarea"
                         row="3"
                         placeholder="Description"
-                        required={true}
-                        {...register("description")}
+                        errors={errors['description']}
+                        {...register("description", { required: "Description is required." })}
                     />
 
-                    <Button variant="primary" type="submit" className="mt-4">
+                    <Button variant="primary" type="submit" className="mt-4" disabled={deactive}>
                         Add Challenges
                     </Button>
                 </Form>

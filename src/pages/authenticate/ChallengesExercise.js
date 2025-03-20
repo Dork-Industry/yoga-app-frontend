@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageTrafficTable } from "../../components/Tables";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useForm } from "react-hook-form";
@@ -55,19 +55,18 @@ const ChallengesExercise = () => {
                         Action: 2
                     }])
                 })
+            } else if (data.challengesexercises.length < 1) {
+                setErrormsg(data.message);
             }
         } else {
+            setchallengesExerciseData([]);
             if (status === 401) {
                 localStorage.removeItem('token');
                 navigate('/');
-            }
-            else {
-                if (data.message) {
-                    setErrormsg(data.message);
-                }
-                else {
-                    setErrormsg("Something Went Wrong!")
-                }
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     }
@@ -80,11 +79,17 @@ const ChallengesExercise = () => {
         let { data, error, status } = await postAPIData(`/updateChallenges/${updateUser.Id}`, values, token);
 
         if (!error) {
+            toast.success("Update was successful!", { position: "top-center", autoClose: 2500 });
             fetchData();
         } else {
             if (status === 401) {
                 localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
         setShowModal(false);
@@ -97,10 +102,12 @@ const ChallengesExercise = () => {
             fetchData();
             toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
         } else {
-            if (status === 401 || status === 400) {
+            if (status === 401) {
                 localStorage.removeItem('token');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
             } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
@@ -113,9 +120,28 @@ const ChallengesExercise = () => {
         daysid: daysid,
         weekid: week_id,
         challengesid: challenges_id
-
     }).toString();
 
+    const statusChange = async (Id, Status) => {
+        let { data, error, status } = await postAPIData(`/changeChallengesexerciseStatus`, {
+            id: Id,
+            status: Status ? 1 : 0
+        }, token);
+
+        if (!error) {
+            fetchData();
+        } else {
+            if (status === 401) {
+                localStorage.removeItem('token');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+                navigate('/');
+            } else if (status === 400) {
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
+            } else {
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
+            }
+        }
+    }
     return (
         <React.Fragment>
             <Button variant="primary" className="my-2" onClick={() => navigate(`/admin/addchallengesexercise?${queryParams}`)}>
@@ -126,8 +152,9 @@ const ChallengesExercise = () => {
                 handleModal={setShowModal}
                 setUser={setUpdateUser}
                 deleteUser={setDeleteUser}
+                statusChange={statusChange}
             />
-                : <h2>{errormsg}</h2>}
+                : errormsg ? <h2>{errormsg}</h2> : <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>

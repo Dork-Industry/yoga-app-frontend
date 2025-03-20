@@ -5,10 +5,8 @@ import { faAngleDown, faAngleUp, faChartArea, faChartBar, faChartLine, faFlagUsa
 import { faAngular, faBootstrap, faReact, faVuejs } from "@fortawesome/free-brands-svg-icons";
 import { Col, Row, Card, Image, Button, ListGroup, ProgressBar } from "react-bootstrap";
 import { CircleChart, BarChart, SalesValueChart, SalesValueChartphone } from "./Charts";
-
 import Profile1 from "../assets/img/team/profile-picture-1.jpg";
 import ProfileCover from "../assets/img/profile-cover.jpg";
-
 import teamMembers from "../data/teamMembers";
 
 
@@ -63,35 +61,20 @@ export const ChoosePhotoWidget = (props) => {
 };
 
 export const CounterWidget = (props) => {
-  const { icon, iconColor, category, title, period, percentage } = props;
-  const percentageIcon = percentage < 0 ? faAngleDown : faAngleUp;
-  const percentageColor = percentage < 0 ? "text-danger" : "text-success";
+  const { icon, category, title } = props;
 
   return (
     <Card border="light" className="shadow-sm">
       <Card.Body>
-        <Row className="d-block d-xl-flex align-items-center">
-          <Col xl={5} className="text-xl-center d-flex align-items-center justify-content-xl-center mb-3 mb-xl-0">
-            <div className={`icon icon-shape  icon-${iconColor} rounded me-4 me-sm-0`}>
+        <Row>
+          <Col className="col-9">
+            <p style={{ fontSize: '18px' }}>{category}</p>
+            <h5 className="mb-1">{title}</h5>
+          </Col>
+          <Col className="col-3">
+            <div className={`icon icon-shape rounded me-4 me-sm-0`}>
               <FontAwesomeIcon icon={icon} />
             </div>
-            <div className="d-sm-none">
-              <p style={{ fontSize: '12px' }}>{category}</p>
-              <h5 className="mb-1">{title}</h5>
-            </div>
-          </Col>
-          <Col xs={12} xl={7} className="px-xl-0">
-            <div className="d-none d-sm-block">
-              <p style={{ fontSize: '12px' }}>{category}</p>
-              <h5 className="mb-1">{title}</h5>
-            </div>
-            {/* <small>{period}, <FontAwesomeIcon icon={faGlobeEurope} size="xs" /> WorldWide</small> */}
-            {/* <div className="small mt-2">
-              <FontAwesomeIcon icon={percentageIcon} className={`${percentageColor} me-1`} />
-              <span className={`${percentageColor} fw-bold`}>
-                {percentage}%
-              </span> Since last month
-            </div> */}
           </Col>
         </Row>
       </Card.Body>
@@ -247,7 +230,6 @@ export const ProgressTrackWidget = () => {
         <h5 className="mb-0">Progress track</h5>
       </Card.Header>
       <Card.Body>
-
         <Progress title="Rocket - SaaS Template" color="purple" icon={faBootstrap} percentage={34} />
         <Progress title="Pixel - Design System" color="danger" icon={faAngular} percentage={60} />
         <Progress title="Spaces - Listings Template" color="tertiary" icon={faVuejs} percentage={45} />

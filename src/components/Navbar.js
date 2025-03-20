@@ -77,7 +77,10 @@ export default (props) => {
                 <Dropdown.Item className="fw-bold">
                   <FontAwesomeIcon icon={faUserCircle} className="me-2" /> My Profile
                 </Dropdown.Item>
-                <Dropdown.Item className="fw-bold">
+                <Dropdown.Item className="fw-bold" onClick={()=>{
+                  localStorage.removeItem('token');
+                  navigate('/admin/change-password');
+                }}>
                   <FontAwesomeIcon icon={faUserSecret} className="me-2" /> Change Password
                 </Dropdown.Item>
 
