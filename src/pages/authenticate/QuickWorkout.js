@@ -17,6 +17,7 @@ const QuickWorkout = () => {
         Id: 0,
         IsConfirmed: false
     });
+    const [errormsg, setErrormsg] = useState('');
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
 
@@ -53,19 +54,20 @@ const QuickWorkout = () => {
                                 quickworkoutid: item._id,
                             },
                         },
-                        Pro: item.isActive,
+                        Pro: item.isPro,
                         Action: 1
                     }])
                 })
+            } else if (data.quickworkouts.length < 1) {
+                setErrormsg(data.message);
             }
         } else {
             if (status === 401) {
                 localStorage.removeItem('token');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
-            } else if (status === 400) {
-                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
             } else {
+                setErrormsg(' ');
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
@@ -147,12 +149,12 @@ const QuickWorkout = () => {
                     setUser={setUpdateUser}
                     deleteUser={setDeleteUser}
                     statusChange={statusChange}
-                /> : <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
+                /> : errormsg ? <h1>{errormsg}</h1> : <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Update Workout</Modal.Title>
+                        <Modal.Title>Edit Workout</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <InputField
@@ -165,6 +167,13 @@ const QuickWorkout = () => {
                         />
 
                         <InputField
+                            label="Workout Image"
+                            type="file"
+                            errors={errors['image']}
+                            {...register('image', { required: "Workout image is required." })}
+                        />
+
+                        <InputField
                             label="Description"
                             type="textarea"
                             row="3"
@@ -174,6 +183,11 @@ const QuickWorkout = () => {
                             {...register('description', { required: "Description is required." })}
                         />
 
+                        <InputField
+                            label="Selected Image"
+                            type="image"
+                            defaultValue={updateUser?.Image}
+                        />
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>

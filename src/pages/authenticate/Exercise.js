@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAPIData, postAPIData } from "../../utils/getAPIData";
 import { PageTrafficTable } from "../../components/Tables";
-import { Button, Form, Modal, Spinner } from "react-bootstrap";
+import { Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InputField from "../../utils/InputField";
@@ -61,6 +61,7 @@ const Exercise = () => {
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
             } else {
+                setErrormsg(' ');
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
@@ -148,7 +149,7 @@ const Exercise = () => {
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Update Exercise</Modal.Title>
+                        <Modal.Title>Edit Exercise</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <InputField
@@ -169,7 +170,7 @@ const Exercise = () => {
                             {...register('exerciseTime')}
                         />
 
-                        {/* <InputField
+                        <InputField
                             label="Exercise Image"
                             type="file"
                             errors={errors['image']}
@@ -182,18 +183,6 @@ const Exercise = () => {
                             errors={errors['video']}
                             accept="video/mp4,video/x-m4v,video/*"
                             {...register('video', { required: "Exercise video is required." })}
-                        /> */}
-
-                        <InputField
-                            label="Selected Image"
-                            type="image"
-                            defaultValue={updateUser?.Image}
-                        />
-
-                        <InputField
-                            label="Selected Video"
-                            type="video"
-                            defaultValue={updateUser?.Video}
                         />
 
                         <InputField
@@ -204,6 +193,23 @@ const Exercise = () => {
                             errors={errors['description']}
                             {...register('description', { required: "Description is required." })}
                         />
+
+                        <Row>
+                            <Col className="col-4">
+                                <InputField
+                                    label="Selected Image"
+                                    type="image"
+                                    defaultValue={updateUser?.Image}
+                                />
+                            </Col>
+                            <Col className="col-8">
+                                <InputField
+                                    label="Selected Video"
+                                    type="video"
+                                    defaultValue={updateUser?.Video}
+                                />
+                            </Col>
+                        </Row>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>

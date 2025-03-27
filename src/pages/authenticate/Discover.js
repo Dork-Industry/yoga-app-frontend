@@ -54,7 +54,7 @@ const Discover = () => {
                                 discoverid: item._id,
                             },
                         },
-                        Pro: item.isActive,
+                        Pro: item.isPro,
                         Action: 1
                     }])
                 })
@@ -67,6 +67,7 @@ const Discover = () => {
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
             } else {
+                setErrormsg(' ');
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
@@ -167,6 +168,13 @@ const Discover = () => {
                         />
 
                         <InputField
+                            label="Discover Image"
+                            type="file"
+                            errors={errors['image']}
+                            {...register('image', { required: "Discover image is required." })}
+                        />
+
+                        <InputField
                             label="Description"
                             type="textarea"
                             row="3"
@@ -176,6 +184,11 @@ const Discover = () => {
                             {...register('description', { required: "Description is required." })}
                         />
 
+                        <InputField
+                            label="Selected Image"
+                            type="image"
+                            defaultValue={updateUser?.Image}
+                        />
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>

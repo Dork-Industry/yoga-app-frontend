@@ -60,22 +60,21 @@ const WeekDays = () => {
                         Action: 1
                     }])
                 })
+            } else if (data.days.length < 1) {
+                setErrormsg(data.message);
             }
-
         }
         else {
+            setWeekDaysData([]);
             if (status === 401) {
                 localStorage.removeItem('token');
                 navigate('/');
-            }
-            else {
-                setWeekDaysData([]);
-                if (data.message) {
-                    setErrormsg(data.message);
-                }
-                else {
-                    setErrormsg("Something Went Wrong!")
-                }
+            } else if (status === 400) {
+                setErrormsg(' ');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
+            } else {
+                setErrormsg(' ');
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     }

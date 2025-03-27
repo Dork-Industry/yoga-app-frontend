@@ -78,6 +78,7 @@ const Settings = () => {
         toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
         navigate('/');
       } else {
+        setErrormsg(' ');
         toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
       }
     }

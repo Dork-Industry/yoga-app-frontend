@@ -55,7 +55,7 @@ const Challenges = () => {
                                 challengesid: item._id,
                             },
                         },
-                        Pro: item.isActive,
+                        Pro: item.isPro,
                         Action: 1
                     }])
                 })
@@ -68,6 +68,7 @@ const Challenges = () => {
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
                 navigate('/');
             } else {
+                setErrormsg(' ');
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
             }
         }
@@ -155,16 +156,23 @@ const Challenges = () => {
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Update Challenge</Modal.Title>
+                        <Modal.Title>Edit Challenge</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <InputField
                             type="text"
-                            label="Challenge"
+                            label="Challenge Name"
                             placeholder="Challenge"
                             defaultValue={updateUser?.Challenges_Name}
                             errors={errors['challengesName']}
                             {...register("challengesName", { required: "Challenge name is required." })}
+                        />
+
+                        <InputField
+                            label="Challenges Image"
+                            type="file"
+                            errors={errors['image']}
+                            {...register('image', { required: "Challenges image is required." })}
                         />
 
                         <InputField
@@ -177,6 +185,11 @@ const Challenges = () => {
                             {...register("description", { required: "Description is required." })}
                         />
 
+                        <InputField
+                            label="Selected Image"
+                            type="image"
+                            defaultValue={updateUser?.Image}
+                        />
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>

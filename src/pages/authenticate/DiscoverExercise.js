@@ -37,20 +37,20 @@ const DiscoverExercise = () => {
                         Action: 2
                     }])
                 })
+            } else if (data.discoverexercises.length < 1) {
+                setErrormsg(data.message);
             }
         } else {
+            setdiscoverExercises([]);
             if (status === 401) {
                 localStorage.removeItem('token');
                 navigate('/');
-            }
-            else {
-                setdiscoverExercises([]);
-                if (data.message) {
-                    setErrormsg(data.message);
-                }
-                else {
-                    setErrormsg("Something Went Wrong!")
-                }
+            } else if (status === 400) {
+                setErrormsg(' ');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
+            } else {
+                setErrormsg(' ');
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     }

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Col, Row, Spinner } from "react-bootstrap";
-import { CounterWidget, TeamMembersWidget } from "../../components/Widgets";
+import { CounterWidget } from "../../components/Widgets";
 import { getAPIData } from "../../utils/getAPIData";
 import { useNavigate } from "react-router-dom";
 import { faList, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -24,8 +24,6 @@ export default () => {
           localStorage.removeItem('token');
           toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 });
           navigate('/');
-        } else if (status === 400) {
-          toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
         } else {
           toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 });
         }

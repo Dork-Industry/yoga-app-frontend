@@ -37,19 +37,20 @@ const StretchesExercise = () => {
                         Action: 2
                     }])
                 })
+            } else if (data.stretchesexercises.length < 1) {
+                setErrormsg(data.message);
             }
         } else {
+            setStretchesExercise([]);
             if (status === 401) {
                 localStorage.removeItem('token');
                 navigate('/');
+            } else if (status === 400) {
+                setErrormsg(' ');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
             } else {
-                setStretchesExercise([]);
-                if (data.message) {
-                    setErrormsg(data.message);
-                }
-                else {
-                    setErrormsg("Something Went Wrong!")
-                }
+                setErrormsg(' ');
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     }

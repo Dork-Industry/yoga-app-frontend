@@ -64,8 +64,10 @@ const ChallengesExercise = () => {
                 localStorage.removeItem('token');
                 navigate('/');
             } else if (status === 400) {
+                setErrormsg(' ');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
             } else {
+                setErrormsg(' ');
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }

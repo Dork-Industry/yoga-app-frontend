@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Image } from "react-bootstrap";
 import { Editor } from "react-draft-wysiwyg";
 
-const InputField = ({ label, type, placeholder, setValue, row, defaultValue, min, errors,options,accept,...props }) => {
+const InputField = ({ label, type, placeholder, setValue, row, defaultValue, min, errors, options, accept, ...props }) => {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
     const onEditorStateChange = (state) => {
@@ -15,7 +15,7 @@ const InputField = ({ label, type, placeholder, setValue, row, defaultValue, min
 
     useEffect(() => {
         if (type === "rte") {
-            if(defaultValue){
+            if (defaultValue) {
                 const rowConvert = convertFromHTML(defaultValue);
                 const contentState = ContentState.createFromBlockArray(rowConvert.contentBlocks, rowConvert.entityMap);
                 setEditorState(EditorState.createWithContent(contentState))
@@ -26,7 +26,7 @@ const InputField = ({ label, type, placeholder, setValue, row, defaultValue, min
 
     return (
         <React.Fragment>
-            <Form.Group className="mb-1">
+            <Form.Group>
                 {label && <Form.Label>{label}</Form.Label>}
                 {type === "rte" ? (
                     <Editor
@@ -40,14 +40,16 @@ const InputField = ({ label, type, placeholder, setValue, row, defaultValue, min
                     <Form.Control as="textarea" rows={row} placeholder={placeholder} defaultValue={defaultValue} {...props} />
                 ) : type === "multiselect" ? (
                     <Form.Select multiple {...props}>
-                        {options.length > 0 && options.map((item, index)=>{
-                            return(<option key={index} value={item.Id}>{item.Exercise_Name}</option>)
+                        {options.length > 0 && options.map((item, index) => {
+                            return (<option key={index} value={item.Id}>{item.Exercise_Name}</option>)
                         })}
                     </Form.Select>
                 ) : type === "image" ? (
-                    <Image src={defaultValue} style={{ height: 100, width: 100 }} className="form-control"/>
+                    <Image src={defaultValue} style={{ height: 100, width: 100 }} className="form-control" />
                 ) : type === "video" ? (
-                    <video src={defaultValue}/>
+                    <video className="form-control" controls>
+                        <source src={defaultValue} type="video/mp4"></source>
+                    </video>
                 ) : (
                     <Form.Control type={type} placeholder={placeholder} defaultValue={defaultValue} min={min} accept={accept} {...props} />
                 )}

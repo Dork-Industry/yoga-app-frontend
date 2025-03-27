@@ -70,13 +70,13 @@ const AddExercise = () => {
                         {...register('image', { required: "Exercise image is required." })}
                     />
 
-                    {/* <InputField
+                    <InputField
                         label="Exercise Video"
                         type="file"
                         errors={errors['video']}
                         accept="video/mp4,video/x-m4v,video/*"
                         {...register('video', { required: "Exercise video is required." })}
-                    /> */}
+                    />
 
                     <InputField
                         label="Exercise Time (in minutes)"

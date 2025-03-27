@@ -59,22 +59,21 @@ const Weeks = () => {
                         Action: 1
                     }])
                 })
+            } else if (data.weeks.length < 1) {
+                setErrormsg(data.message);
             }
-
         }
         else {
+            setWeeksData([]);
             if (status === 401) {
                 localStorage.removeItem('token');
                 navigate('/');
-            }
-            else {
-                setWeeksData([]);
-                if (data.message) {
-                    setErrormsg(data.message);
-                }
-                else {
-                    setErrormsg("Something Went Wrong!")
-                }
+            } else if (status === 400) {
+                setErrormsg(' ');
+                toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
+            } else {
+                setErrormsg(' ');
+                toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
             }
         }
     }
@@ -133,9 +132,12 @@ const Weeks = () => {
             </Button>
 
             {weekData.length > 0 ?
-                <PageTrafficTable data={weekData} handleModal={setShowModal} setUser={setUpdateUser} deleteUser={setDeleteUser} /> :
-                errormsg ? <h2>{errormsg}</h2> :
-                    <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
+                <PageTrafficTable
+                    data={weekData}
+                    handleModal={setShowModal}
+                    setUser={setUpdateUser}
+                    deleteUser={setDeleteUser}
+                /> : errormsg ? <h2>{errormsg}</h2> : <Spinner animation='border' variant='primary' style={{ height: 80, width: 80 }} className="position-absolute top-50 start-50" />}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Form onSubmit={handleSubmit(updateData)}>
