@@ -142,7 +142,7 @@ export const PageTrafficTable = ({ data, handleModal, setUser, deleteUser, statu
           return (
             <td key={index}>
               {value[0] === "Image" ? (
-                <Image src={value[1]} style={{ height: 50, width: 50 }} />
+                <Image src={`${process.env.REACT_APP_UPLOADS_URL}${value[1]}`} style={{ height: 50, width: 50 }} />
               ) : (value[0] === "Pro" || value[0] === "Active") ? (
                 <ToggleSwitch activity={value[1]} id={props.Id} updateStatus={statusChange} />
               ) : value[0] === "Action" ?

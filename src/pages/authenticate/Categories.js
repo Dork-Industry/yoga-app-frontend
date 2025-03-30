@@ -172,18 +172,26 @@ const Categories = () => {
                             {...register('description', { required: "Description is required." })}
                         />
 
-                        {/* <InputField
+                        <InputField
                             label="Category Image"
                             type="file"
                             errors={errors['image']}
-                            {...register('image', { required: "Category image is required." })}
-                        /> */}
+                            {...register('image', {
+                                required: "Category image is required.", validate: (file) => {
+                                    const image = file[0];
+                                    if (image.size > 100 * 1024) {
+                                        return "File size must be less than 100 KB";
+                                    }
+                                    return true;
+                                }
+                            })}
+                        />
 
-                        {/* <InputField
+                        <InputField
                             label="Selected Image"
                             type="image"
                             defaultValue={updateUser?.Image}
-                        /> */}
+                        />
 
                     </Modal.Body>
                     <Modal.Footer>

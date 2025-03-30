@@ -66,7 +66,15 @@ const AddChallenge = () => {
                         label="Challenges Image"
                         type="file"
                         errors={errors['image']}
-                        {...register("image", { required: "Challenge image is required." })}
+                        {...register("image", {
+                            required: "Challenge image is required.", validate: (file) => {
+                                const image = file[0];
+                                if (image.size > 1024 * 1024) {
+                                    return "File size must be less than 100 KB";
+                                }
+                                return true;
+                            }
+                        })}
                     />
 
                     <InputField

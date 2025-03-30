@@ -10,7 +10,7 @@ const AddCategory = () => {
     const {
         register,
         handleSubmit,
-        formState:{errors}
+        formState: { errors }
     } = useForm();
     const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ const AddCategory = () => {
                 localStorage.removeItem('token');
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
                 navigate('/');
-            } else if(status === 400){
+            } else if (status === 400) {
                 toast.error(`${data.message}`, { position: "top-center", autoClose: 2500 })
             } else {
                 toast.error("Something went wrong.", { position: "top-center", autoClose: 2500 })
@@ -59,14 +59,22 @@ const AddCategory = () => {
                         type="text"
                         placeholder="Categoty"
                         errors={errors['categoryName']}
-                        {...register('categoryName',{required:"Category is required."})}
+                        {...register('categoryName', { required: "Category is required." })}
                     />
 
                     <InputField
                         label="Category Image"
                         type="file"
                         errors={errors['image']}
-                        {...register('image', {required:"Category image is required."})}
+                        {...register('image', {
+                            required: "Category image is required.", validate: (file) => {
+                                const image = file[0];
+                                if (image.size > 1024 * 1024) {
+                                    return "File size must be less than 100 KB";
+                                }
+                                return true;
+                            }
+                        })}
                     />
 
                     <InputField
@@ -75,7 +83,7 @@ const AddCategory = () => {
                         row="3"
                         placeholder="Description"
                         errors={errors['description']}
-                        {...register('description',{required:"Description is required."})}
+                        {...register('description', { required: "Description is required." })}
                     />
 
                     <Button variant="primary" type="submit" className="mt-4" disabled={deactive}>

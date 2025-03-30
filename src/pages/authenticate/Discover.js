@@ -171,7 +171,15 @@ const Discover = () => {
                             label="Discover Image"
                             type="file"
                             errors={errors['image']}
-                            {...register('image', { required: "Discover image is required." })}
+                            {...register('image', {
+                                required: "Discover image is required.", validate: (file) => {
+                                    const image = file[0];
+                                    if (image.size > 100 * 1024) {
+                                        return "File size must be less than 100 KB";
+                                    }
+                                    return true;
+                                }
+                            })}
                         />
 
                         <InputField
