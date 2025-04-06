@@ -88,10 +88,14 @@ export default (props = {}) => {
               <NavItem title="Dashboard" link={RoutesData.DashboardOverview.path} icon={faHouse} />
               <NavItem title="Exercise" link={RoutesData.Exercise.path} icon={faDumbbell} />
               <NavItem title="Challenges" link={RoutesData.Challenges.path} icon={faChildReaching} />
-              <NavItem title="Category" link={RoutesData.Categories.path} icon={faList} />
-              <NavItem title="Discover" link={RoutesData.Discover.path} icon={faCompass} />
-              <NavItem title="Quick Workout" link={RoutesData.QuickWorkout.path} icon={faPersonPraying} />
-              <NavItem title="Stretches" link={RoutesData.Stretches.path} icon={faPersonWalking} />
+              {/* <NavItem title="Category" link={RoutesData.Categories.path} icon={faList} /> */}
+              <NavItem title="Meditation Styles" link={RoutesData.Categories.path} icon={faList} />
+              {/* <NavItem title="Discover" link={RoutesData.Discover.path} icon={faCompass} /> */}
+              <NavItem title="Seasion Exercise" link={RoutesData.Discover.path} icon={faCompass} />
+              {/* <NavItem title="Quick Workout" link={RoutesData.QuickWorkout.path} icon={faPersonPraying} /> */}
+              <NavItem title="Yoga Styles" link={RoutesData.QuickWorkout.path} icon={faPersonPraying} />
+              {/* <NavItem title="Stretches" link={RoutesData.Stretches.path} icon={faPersonWalking} /> */}
+              <NavItem title="Body Fitness" link={RoutesData.Stretches.path} icon={faPersonWalking} />
               <NavItem title="Plan" link={RoutesData.Plan.path} icon={faMoneyBill} />
               <NavItem title="Settings" icon={faCog} link={RoutesData.Settings.path} />
               <NavItem title="Users" icon={faUsers} link={RoutesData.Users.path} />

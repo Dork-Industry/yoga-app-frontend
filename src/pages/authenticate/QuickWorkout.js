@@ -17,6 +17,7 @@ const QuickWorkout = () => {
         Id: 0,
         IsConfirmed: false
     });
+    const [deactive, setDeactive] = useState(false);
     const [errormsg, setErrormsg] = useState('');
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
@@ -44,7 +45,7 @@ const QuickWorkout = () => {
                     setWorkoutData((prev) => [...prev, {
                         Id: item._id,
                         Image: item.image,
-                        Quick_Workout: item.quickworkout,
+                        Yoga_Styles: item.quickworkout,
                         Description: item.description,
                         View_Exercise: {
                             label: "View Exercise",
@@ -98,6 +99,7 @@ const QuickWorkout = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteQuickworkout/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -140,7 +142,7 @@ const QuickWorkout = () => {
     return (
         <React.Fragment>
             <Button variant="primary" className="my-2" onClick={() => navigate('/admin/workout/add')}>
-                <FontAwesomeIcon icon={faPlus} /> Add New Quick Workout
+                <FontAwesomeIcon icon={faPlus} /> Add New Yoga Styles
             </Button>
             {workoutData.length > 0 ?
                 <PageTrafficTable
@@ -219,7 +221,7 @@ const QuickWorkout = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

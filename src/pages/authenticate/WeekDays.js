@@ -17,6 +17,7 @@ const WeekDays = () => {
         Id: 0,
         IsConfirmed: false
     });
+    const [deactive, setDeactive] = useState(false);
     const [errormsg, setErrormsg] = useState("")
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -116,6 +117,7 @@ const WeekDays = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteDay/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -183,7 +185,7 @@ const WeekDays = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

@@ -15,7 +15,7 @@ const StretchesExercise = () => {
         Id: 0,
         IsConfirmed: false
     });
-
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
     const stretches_id = searchParams.get('stretchesid');
     let token = localStorage.getItem('token');
@@ -60,6 +60,7 @@ const StretchesExercise = () => {
     }, []);
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteStretchesexercise/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -122,7 +123,7 @@ const StretchesExercise = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

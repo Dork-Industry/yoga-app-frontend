@@ -18,6 +18,7 @@ const Categories = () => {
         IsConfirmed: false
     });
     const [errormsg, setErrormsg] = useState('');
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
 
@@ -44,7 +45,7 @@ const Categories = () => {
                     setCategoriesData((prev) => [...prev, {
                         Id: item._id,
                         Image: item.image,
-                        Category: item.category,
+                        'Meditation Styles': item.category,
                         Description: item.description,
                         View_Exercise: {
                             label: "View Exercise",
@@ -98,6 +99,7 @@ const Categories = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteCategory/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -136,7 +138,8 @@ const Categories = () => {
     return (
         <React.Fragment>
             <Button variant="primary" className="my-2" onClick={() => navigate('/admin/category/add')}>
-                <FontAwesomeIcon icon={faPlus} /> Add New Category
+                {/* <FontAwesomeIcon icon={faPlus} /> Add New Category */}
+                <FontAwesomeIcon icon={faPlus} /> Add New Meditation Styles
             </Button>
             {categoriesData.length > 0 ?
                 <PageTrafficTable
@@ -216,7 +219,7 @@ const Categories = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

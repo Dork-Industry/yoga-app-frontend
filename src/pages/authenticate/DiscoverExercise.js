@@ -15,7 +15,7 @@ const DiscoverExercise = () => {
         Id: 0,
         IsConfirmed: false
     });
-
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
     const discover_id = searchParams.get('discoverid');
     let token = localStorage.getItem('token');
@@ -60,6 +60,7 @@ const DiscoverExercise = () => {
     }, []);
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteDiscoverexercise/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -121,7 +122,7 @@ const DiscoverExercise = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

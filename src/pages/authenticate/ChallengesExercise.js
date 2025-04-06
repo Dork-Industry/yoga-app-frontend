@@ -22,7 +22,7 @@ const ChallengesExercise = () => {
         IsConfirmed: false
     });
     const [errormsg, setErrormsg] = useState("")
-
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
 
@@ -98,6 +98,7 @@ const ChallengesExercise = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteChallengesexercise/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -204,7 +205,7 @@ const ChallengesExercise = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

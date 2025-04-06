@@ -45,7 +45,7 @@ const InputField = ({ label, type, placeholder, setValue, row, defaultValue, min
                         })}
                     </Form.Select>
                 ) : type === "image" ? (
-                    <Image src={defaultValue} style={{ height: 100, width: 100 }} className="form-control" />
+                    <Image src={`${process.env.REACT_APP_UPLOADS_URL}${defaultValue}`} style={{ height: 100, width: 100 }} className="form-control" />
                 ) : type === "video" ? (
                     <video className="form-control" controls>
                         <source src={defaultValue} type="video/mp4"></source>

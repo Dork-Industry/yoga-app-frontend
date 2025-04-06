@@ -18,6 +18,7 @@ const Discover = () => {
         IsConfirmed: false
     });
     const [errormsg, setErrormsg] = useState('');
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
 
@@ -44,7 +45,7 @@ const Discover = () => {
                     setDiscoverData((prev) => [...prev, {
                         Id: item._id,
                         Image: item.image,
-                        Discover: item.discover,
+                        'Seasion Exercise': item.discover,
                         Description: item.description,
                         View_Exercise: {
                             label: "View Exercise",
@@ -98,6 +99,7 @@ const Discover = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteDiscover/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -141,7 +143,7 @@ const Discover = () => {
     return (
         <React.Fragment>
             <Button variant="primary" className="my-2" onClick={() => navigate('/admin/discover/add')}>
-                <FontAwesomeIcon icon={faPlus} /> Add New Discover
+                <FontAwesomeIcon icon={faPlus} /> Add New Seasion Exercise
             </Button>
             {discoverData.length > 0 ?
                 <PageTrafficTable
@@ -220,7 +222,7 @@ const Discover = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

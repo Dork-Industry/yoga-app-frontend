@@ -17,6 +17,7 @@ const Stretches = () => {
         Id: 0,
         IsConfirmed: false
     });
+    const [deactive, setDeactive] = useState(false);
     const [errormsg, setErrormsg] = useState('');
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
@@ -44,7 +45,7 @@ const Stretches = () => {
                     setStretchesData((prev) => [...prev, {
                         Id: item._id,
                         Image: item.image,
-                        Stretches: item.stretches,
+                        Body_Fitness: item.stretches,
                         Description: item.description,
                         View_Exercise: {
                             label: "View Exercise",
@@ -98,6 +99,7 @@ const Stretches = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteStretches/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -141,7 +143,7 @@ const Stretches = () => {
     return (
         <React.Fragment>
             <Button variant="primary" className="my-2" onClick={() => navigate('/admin/stretches/add')}>
-                <FontAwesomeIcon icon={faPlus} /> Add New Stretches
+                <FontAwesomeIcon icon={faPlus} /> Add New Body Fitness
             </Button>
             {stretchesData.length > 0 ?
                 <PageTrafficTable
@@ -219,7 +221,7 @@ const Stretches = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

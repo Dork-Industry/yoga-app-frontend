@@ -17,6 +17,7 @@ const Exercise = () => {
         Id: 0,
         IsConfirmed: false
     });
+    const [deactive, setDeactive] = useState(false);
     const [errormsg, setErrormsg] = useState('');
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
@@ -93,6 +94,7 @@ const Exercise = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteExercise/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -241,7 +243,7 @@ const Exercise = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

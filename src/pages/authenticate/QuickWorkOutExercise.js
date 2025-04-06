@@ -15,7 +15,7 @@ const QuickWorkOutExercise = () => {
         Id: 0,
         IsConfirmed: false
     });
-
+    const [deactive, setDeactive] = useState(false);
     const navigate = useNavigate();
     const quickworkout_id = searchParams.get('quickworkoutid');
     let token = localStorage.getItem('token');
@@ -60,6 +60,7 @@ const QuickWorkOutExercise = () => {
     }, []);
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deleteQuickworkoutexercise/${deleteUser.Id}`, null, token);
 
         if (!error) {
@@ -123,7 +124,7 @@ const QuickWorkOutExercise = () => {
                     <Button variant="secondary" onClick={() => setDeleteUser({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>

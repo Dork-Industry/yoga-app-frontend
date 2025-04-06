@@ -17,6 +17,7 @@ const Plan = () => {
         Id: 0,
         IsConfirmed: false
     });
+    const [deactive, setDeactive] = useState(false);
     const [errormsg, setErrormsg] = useState('');
     const navigate = useNavigate();
     let token = localStorage.getItem('token');
@@ -94,6 +95,7 @@ const Plan = () => {
     }
 
     const deleteData = async () => {
+        setDeactive(true);
         let { data, error, status } = await postAPIData(`/deletePlan/${deletePlan.Id}`, null, token);
 
         if (!error) {
@@ -200,7 +202,7 @@ const Plan = () => {
                     <Button variant="secondary" onClick={() => setDeletePlan({ Id: 0, IsConfirmed: false })}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={deleteData}>
+                    <Button variant="primary" onClick={deleteData} disabled={deactive}>
                         Confirm Delete
                     </Button>
                 </Modal.Footer>
